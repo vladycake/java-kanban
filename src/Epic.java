@@ -3,14 +3,14 @@ import java.util.ArrayList;
 
 public class Epic extends Task {
 
-    private final int id;
+
     private ArrayList<Subtask> subtaskList;
 
-    @Override
-    public int getId() {
-        return id;
-    }
+    public Epic(String title, String description) {
+        super(title, description);
+        this.subtaskList = new ArrayList<>();
 
+    }
 
     public ArrayList<Subtask> getSubtaskList() {
         return subtaskList;
@@ -18,15 +18,14 @@ public class Epic extends Task {
 
     public void addSubtask(Subtask subtask) {
         subtaskList.add(subtask);
+        subtask.setEpic(this);
     }
 
-    public Epic(String title, String description) {
-        super(title, description);
-        this.id = TaskManager.generateTaskID();
-        this.subtaskList = new ArrayList<>();
 
+    @Override
+    public int getId() {
+        return id;
     }
-
 
     public boolean isCompleted() {
         for (Subtask subtask : subtaskList) {

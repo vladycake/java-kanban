@@ -3,7 +3,7 @@ import java.util.Objects;
 public class Task {
     private final String title;
     private final String description;
-    private final int id;
+    protected final int id;
     private Status status;
 
 
@@ -40,7 +40,13 @@ public class Task {
         return Objects.hash(title, description, id, status);
     }
 
-
-
-
+    @Override
+    public String toString() {
+        return "Task{" +
+                "title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", id=" + id +
+                ", status=" + status +
+                '}';
+    }
 }

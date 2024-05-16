@@ -26,20 +26,13 @@ public class TaskManager {
     }
 
     public List<Subtask> getSubtasksList() {
-        List<Subtask> list = new ArrayList<>();
-        for (Subtask task : subtasks.values()) {
-            list.add(task);
-        }
+        List<Subtask> list = new ArrayList<>(subtasks.values());
         return list;
 
     }
 
     public List<Epic> getEpicList() {
-        List<Epic> list = new ArrayList<>();
-        for (Epic task : epics.values()) {
-            list.add(task);
-        }
-        return list;
+        return new ArrayList<>(epics.values());
 
     }
 
@@ -68,15 +61,16 @@ public class TaskManager {
     }
 
     public void addSubtask(Subtask subtask) {
-
         subtasks.put(subtask.getId(), subtask);
-        Epic epic = epics.get(subtask.getEpic().getId());
+
+        Epic epic = subtask.getEpic();
         if (epic != null) {
+            if (!epics.containsKey(epic.getId())) {
+                addEpic(epic);
+            }
             epic.addSubtask(subtask);
             updateEpicStatus(epic);
         }
-
-
     }
 
     public void addEpic(Epic epic) {
@@ -110,14 +104,16 @@ public class TaskManager {
     }
 
 
-    public ArrayList<Subtask> getSubstasksList(Epic epic) {
-        ArrayList<Subtask> list = epic.getSubtaskList();
-        return list;
+    public ArrayList<Subtask> getSubtasksList(Epic epic) {
+        return epic.getSubtaskList();
+
     }
 
     private void updateEpicStatus(Epic epic) {
         boolean allIsDone = true;
         boolean allIsInProgress = true;
+        boolean hasNewOrInProgress = false; // Добавлено для правильной проверки
+
         ArrayList<Subtask> list = epic.getSubtaskList();
 
         for (Subtask subtask : list) {
@@ -127,13 +123,17 @@ public class TaskManager {
             if (subtask.getStatus() != Status.IN_PROGRESS) {
                 allIsInProgress = false;
             }
+            if (subtask.getStatus() == Status.NEW || subtask.getStatus() == Status.IN_PROGRESS) {
+                hasNewOrInProgress = true;
+            }
+        }
 
-            if (allIsDone) {
-                epic.setStatus(Status.DONE);
-            }
-            if (allIsInProgress) {
-                epic.setStatus(Status.IN_PROGRESS);
-            }
+        if (allIsDone) {
+            epic.setStatus(Status.DONE);
+        } else if (allIsInProgress || hasNewOrInProgress) {
+            epic.setStatus(Status.IN_PROGRESS);
+        } else {
+            epic.setStatus(Status.NEW);
         }
     }
 
