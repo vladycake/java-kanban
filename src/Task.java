@@ -1,23 +1,27 @@
 import java.util.Objects;
 
 public class Task {
-    private final String title;
-    private final String description;
-    protected final int id;
-    private Status status;
+    protected final String title;
+    protected final String description;
+    protected int id;
+    protected Status status;
 
 
     public Task(String title, String description) {
         this.title = title;
         this.description = description;
         this.status = Status.NEW;
-        this.id = TaskManager.generateTaskID();
 
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getId() {
         return id;
     }
+
 
     public void setStatus(Status status) {
         this.status = status;
