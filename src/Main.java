@@ -26,12 +26,26 @@ public class Main {
 
         tm.addEpic(epic2);
         tm.addSubtask(subtask3);
+        System.out.println(epic2);
+        System.out.println(epic2.getSubtaskList());
+
+        tm.deleteEpicId(epic2.getId());
+
+        System.out.println(epic2);
+        System.out.println(epic2.getSubtaskList());
 
 
 
 
-        System.out.println(tm.getSubtasksList(epic1));
-        System.out.println(epic1);
+
+
+
+
+
+
+
+
+
 
 
     }

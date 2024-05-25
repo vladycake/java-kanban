@@ -6,9 +6,9 @@ import java.util.Map;
 public class TaskManager {
     private int taskCounter = 1;
 
-    private Map<Integer, Task> tasks = new HashMap<>();
-    private Map<Integer, Subtask> subtasks = new HashMap<>();
-    private Map<Integer, Epic> epics = new HashMap<>();
+    private final Map<Integer, Task> tasks = new HashMap<>();
+    private final Map<Integer, Subtask> subtasks = new HashMap<>();
+    private final Map<Integer, Epic> epics = new HashMap<>();
 
 
     public int generateTaskID() {
@@ -61,10 +61,10 @@ public class TaskManager {
         subtasks.put(subtask.getId(), subtask);
 
         Epic epic = subtask.getEpic();
-        if (epic != null) {
-            epic.addSubtask(subtask);
-            updateEpicStatus(epic);
-        }
+
+        epic.addSubtask(subtask);
+        updateEpicStatus(epic);
+
     }
 
     public void addEpic(Epic epic) {
@@ -87,7 +87,6 @@ public class TaskManager {
     public void updateEpic(Epic task) {
         epics.put(task.getId(), task);
 
-
     }
 
     public void deleteTaskById(int id) {
@@ -95,12 +94,29 @@ public class TaskManager {
     }
 
     public void deleteSubtaskById(int id) {
+        Subtask subtask = subtasks.get(id);
+        if (subtask == null) {
+            return;
+        }
+        Epic epic = subtask.getEpic();
+        if (epic != null) {
+
+            epic.getSubtaskList().remove(subtask);
+            updateEpicStatus(epic);
+        }
         subtasks.remove(id);
-        updateEpicStatus(subtasks.get(id).getEpic());
     }
 
-    public void deleteEpicyId(int id) {
-        epics.remove(id);
+    public void deleteEpicId(int id) {
+        Epic epic = epics.get(id);
+        if (epic != null) {
+            List<Subtask> list = new ArrayList<>(epic.getSubtaskList());
+            for (Subtask subtask : list) {
+                deleteSubtaskById(subtask.getId());
+            }
+            epics.remove(id);
+        }
+
     }
 
 
@@ -110,6 +126,11 @@ public class TaskManager {
     }
 
     private void updateEpicStatus(Epic epic) {
+
+        if (epic == null) {
+            return;
+        }
+
         int allIsDoneCount = 0;
         int allIsInNewCount = 0;
 
